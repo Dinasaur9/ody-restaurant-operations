@@ -11,6 +11,7 @@
     "db:generate": "pnpm --filter @ody/backend db:generate",
     "db:migrate": "pnpm --filter @ody/backend db:migrate",
     "db:seed": "pnpm --filter @ody/backend db:seed",
+    "db:setup": "docker compose up -d postgres && pnpm db:migrate && pnpm db:seed",
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
