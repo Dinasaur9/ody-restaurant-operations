@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ody
+    ports:
+      - "5432:5432"
+    volumes:
+      - ody-postgres:/var/lib/postgresql/data
+
+volumes:
+  ody-postgres:
