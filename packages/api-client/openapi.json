@@ -1,0 +1,99 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Ody Restaurant Operations API",
+    "version": "0.1.0",
+    "description": "Typed API for restaurant menu, orders, customers, and ordering settings."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8787",
+      "description": "Local development"
+    }
+  ],
+  "tags": [
+    {
+      "name": "System",
+      "description": "Service health and metadata"
+    },
+    {
+      "name": "Menu",
+      "description": "Menu categories and items"
+    },
+    {
+      "name": "Orders",
+      "description": "Ordering and kitchen workflow"
+    },
+    {
+      "name": "CRM",
+      "description": "Customer activity and value"
+    },
+    {
+      "name": "Settings",
+      "description": "Ordering configuration"
+    },
+    {
+      "name": "Dashboard",
+      "description": "Restaurant performance summaries"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Health": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          },
+          "service": {
+            "type": "string",
+            "enum": [
+              "ody-restaurant-api"
+            ]
+          },
+          "version": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "status",
+          "service",
+          "version",
+          "timestamp"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Check API health",
+        "description": "Returns service health without querying the database.",
+        "tags": [
+          "System"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
