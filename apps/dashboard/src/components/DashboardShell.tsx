@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Link, usePathname } from "expo-router";
-import type { PropsWithChildren } from "react";
+import { useState, type PropsWithChildren } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { colors, fontSizes, fontWeights, layout, radii, shadows, spacing } from "@ody/ui";
 import { useGetDashboardSummary, useGetOrderingSettings } from "@ody/api-client";
@@ -42,16 +42,11 @@ export function DashboardShell({ children }: PropsWithChildren) {
         <Text style={styles.navigationLabel}>Manage</Text>
         <View style={styles.navigation}>
           {navigation.map((item) => (
-            <NavLink key={item.href} item={item} active={pathname === item.href} count={item.href === "/orders" ? summary.data?.totalOrders : undefined} />
+            <NavLink key={item.href} item={item} active={pathname === item.href} count={item.href === "/orders" ? summary.data?.pendingOrders : undefined} />
           ))}
         </View>
         <View style={styles.sidebarSpacer} />
-        <Link href="/ui-library" asChild>
-          <Pressable style={({ pressed }) => [styles.libraryLink, pathname === "/ui-library" && styles.navActive, pressed && styles.pressed]}>
-            <Ionicons name="color-palette-outline" size={19} color={colors.textMuted} />
-            <Text style={styles.navText}>UI Library</Text>
-          </Pressable>
-        </Link>
+        <LibraryLink active={pathname === "/ui-library"} />
         <Account />
       </View>
       <ScrollView style={styles.contentScroll} contentContainerStyle={styles.content}>{children}</ScrollView>
@@ -71,12 +66,76 @@ function WorkspacePicker() {
   const settings = useGetOrderingSettings();
   const name = settings.data?.restaurantName ?? "Atelier Ody";
   const initials = getInitials(name) || "AO";
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
 
-  return <Link href="/settings" asChild><Pressable accessibilityRole="button" accessibilityLabel={`Manage ${name} workspace`} style={({ hovered, pressed }: any) => [styles.workspace, hovered && styles.workspaceHovered, pressed && styles.pressed]}><View style={styles.workspaceAvatar}><Text style={styles.workspaceAvatarText}>{initials}</Text></View><View style={styles.workspaceCopy}><Text style={styles.workspaceEyebrow}>Workspace</Text><Text numberOfLines={1} style={styles.workspaceName}>{name}</Text></View><Ionicons name="settings-outline" size={16} color={colors.textMuted} /></Pressable></Link>;
+  return (
+    <Link href="/settings" asChild>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Manage ${name} workspace`}
+        onHoverIn={() => setHovered(true)}
+        onHoverOut={() => setHovered(false)}
+        onPressIn={() => setPressed(true)}
+        onPressOut={() => setPressed(false)}
+        style={StyleSheet.flatten([styles.workspace, hovered && styles.workspaceHovered, pressed && styles.pressed])}
+      >
+        <View style={styles.workspaceAvatar}><Text style={styles.workspaceAvatarText}>{initials}</Text></View>
+        <View style={styles.workspaceCopy}><Text style={styles.workspaceEyebrow}>Workspace</Text><Text numberOfLines={1} style={styles.workspaceName}>{name}</Text></View>
+        <Ionicons name="settings-outline" size={16} color={colors.textMuted} />
+      </Pressable>
+    </Link>
+  );
 }
 
 function NavLink({ item, active, compact = false, count }: { item: (typeof navigation)[number]; active: boolean; compact?: boolean; count?: number }) {
-  return <Link href={item.href} asChild><Pressable accessibilityRole="tab" accessibilityState={{ selected: active }} style={({ hovered, pressed }: any) => [compact ? styles.mobileNavItem : styles.navItem, active && (compact ? styles.mobileNavActive : styles.navActive), hovered && !active && styles.navHovered, pressed && styles.pressed]}><Ionicons name={item.icon} size={compact ? 21 : 19} color={active ? colors.primary : colors.textMuted} /><Text style={[compact ? styles.mobileNavText : styles.navText, active && styles.navTextActive]}>{item.label}</Text>{!compact && count !== undefined && count > 0 && <View style={styles.navCount}><Text style={styles.navCountText}>{count}</Text></View>}</Pressable></Link>;
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  return (
+    <Link href={item.href} asChild>
+      <Pressable
+        accessibilityRole="tab"
+        accessibilityState={{ selected: active }}
+        onHoverIn={() => setHovered(true)}
+        onHoverOut={() => setHovered(false)}
+        onPressIn={() => setPressed(true)}
+        onPressOut={() => setPressed(false)}
+        style={StyleSheet.flatten([
+          compact ? styles.mobileNavItem : styles.navItem,
+          active && (compact ? styles.mobileNavActive : styles.navActive),
+          hovered && !active && styles.navHovered,
+          pressed && styles.pressed,
+        ])}
+      >
+        <Ionicons name={item.icon} size={compact ? 21 : 19} color={active ? colors.primary : colors.textMuted} />
+        <Text style={[compact ? styles.mobileNavText : styles.navText, active && styles.navTextActive]}>{item.label}</Text>
+        {!compact && count !== undefined && count > 0 && (
+          <View style={styles.navCount}><Text style={styles.navCountText}>{count}</Text></View>
+        )}
+      </Pressable>
+    </Link>
+  );
+}
+
+function LibraryLink({ active }: { active: boolean }) {
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  return (
+    <Link href="/ui-library" asChild>
+      <Pressable
+        onHoverIn={() => setHovered(true)}
+        onHoverOut={() => setHovered(false)}
+        onPressIn={() => setPressed(true)}
+        onPressOut={() => setPressed(false)}
+        style={StyleSheet.flatten([styles.libraryLink, active && styles.navActive, hovered && !active && styles.navHovered, pressed && styles.pressed])}
+      >
+        <Ionicons name="color-palette-outline" size={19} color={active ? colors.primary : colors.textMuted} />
+        <Text style={[styles.navText, active && styles.navTextActive]}>UI Library</Text>
+      </Pressable>
+    </Link>
+  );
 }
 
 function Account() {

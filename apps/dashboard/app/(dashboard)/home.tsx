@@ -16,9 +16,9 @@ export default function HomePage() {
     {summary.isPending ? <CardGridSkeleton /> : summary.isError ? <QueryError onRetry={() => summary.refetch()} /> : summary.data && <>
       <View style={styles.metrics}>
         <Metric label="Revenue" value={formatCurrency(summary.data.revenue)} detail="Across non-cancelled orders" icon="wallet-outline" tone="violet" />
-        <Metric label="Total orders" value={String(summary.data.totalOrders)} detail={`${summary.data.activeOrders} active now`} icon="receipt-outline" tone="lime" />
+        <Metric label="Total orders" value={String(summary.data.totalOrders)} detail={`${summary.data.pendingOrders} pending · ${summary.data.activeOrders} active`} icon="receipt-outline" tone="lime" />
         <Metric label="Average order" value={formatCurrency(summary.data.averageOrder)} detail="Excluding cancellations" icon="trending-up-outline" tone="blue" />
-        <Metric label="Customers" value={String(summary.data.customers)} detail={`${summary.data.pendingOrders} awaiting acceptance`} icon="people-outline" tone="orange" />
+        <Metric label="Customers" value={String(summary.data.customers)} detail="Lifetime guest count" icon="people-outline" tone="orange" />
       </View>
       <View style={styles.twoColumns}>
         <View style={styles.mainColumn}>
