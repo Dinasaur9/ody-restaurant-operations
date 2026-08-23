@@ -19,6 +19,10 @@ polished Expo dashboard.
   identity, and opening hours.
 - **UI Library** — tokens, typography, spacing, surfaces, primitives, and product
   states in one dedicated route.
+- **Global search, notifications, and account menu** — available from every page
+  header. Search queries orders, menu items, and customers together and
+  deep-links results into the right page. Notifications lists orders awaiting
+  acceptance.
 
 ## Stack
 
