@@ -1,30 +1,34 @@
 import type { PropsWithChildren } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, fontSizes, fontWeights, radii, shadows, spacing } from "../tokens";
 
 export function Dialog({ open, title, description, children, onClose }: PropsWithChildren<{ open: boolean; title: string; description?: string; onClose: () => void }>) {
   if (!open) return null;
   return (
-    <View accessibilityViewIsModal style={styles.backdrop}>
-      <Pressable accessibilityLabel="Close dialog" style={StyleSheet.absoluteFill} onPress={onClose} />
-      <View accessibilityRole="alert" style={styles.dialog}>
-        <OverlayHeader title={title} description={description} onClose={onClose} />
-        {children}
+    <Modal visible transparent animationType="fade" onRequestClose={onClose}>
+      <View accessibilityViewIsModal style={styles.backdrop}>
+        <Pressable accessibilityLabel="Close dialog" style={StyleSheet.absoluteFill} onPress={onClose} />
+        <View accessibilityRole="alert" style={styles.dialog}>
+          <OverlayHeader title={title} description={description} onClose={onClose} />
+          {children}
+        </View>
       </View>
-    </View>
+    </Modal>
   );
 }
 
 export function Drawer({ open, title, description, children, onClose }: PropsWithChildren<{ open: boolean; title: string; description?: string; onClose: () => void }>) {
   if (!open) return null;
   return (
-    <View accessibilityViewIsModal style={styles.backdrop}>
-      <Pressable accessibilityLabel="Close drawer" style={StyleSheet.absoluteFill} onPress={onClose} />
-      <View style={styles.drawer}>
-        <OverlayHeader title={title} description={description} onClose={onClose} />
-        {children}
+    <Modal visible transparent animationType="fade" onRequestClose={onClose}>
+      <View accessibilityViewIsModal style={styles.backdrop}>
+        <Pressable accessibilityLabel="Close drawer" style={StyleSheet.absoluteFill} onPress={onClose} />
+        <View style={styles.drawer}>
+          <OverlayHeader title={title} description={description} onClose={onClose} />
+          {children}
+        </View>
       </View>
-    </View>
+    </Modal>
   );
 }
 
