@@ -3,6 +3,7 @@ export * from "./tokens";
 export * from "./components/Badge";
 export * from "./components/Button";
 export * from "./components/Card";
+export * from "./components/Dropdown";
 export * from "./components/Feedback";
 export * from "./components/Field";
 export * from "./components/List";
