@@ -4,6 +4,7 @@ import { Button, Card, Divider, Field, InlineMessage, Skeleton, Toast, Toggle, c
 import { PageScaffold } from "@/components/PageScaffold";
 import { QueryError } from "@/components/OperationalStates";
 import { useSettingsOperations } from "@/hooks/useSettingsOperations";
+import { getInitials } from "@ody/shared";
 
 export default function SettingsPage() {
   const operations = useSettingsOperations();
@@ -12,7 +13,7 @@ export default function SettingsPage() {
   return <PageScaffold eyebrow="Workspace" title="Settings" description={`Configure how ${restaurantName} accepts and prepares online orders.`} action={<Button loading={operations.pending} disabled={!operations.dirty || !operations.valid} onPress={operations.save}>{saveLabel}</Button>}>
     {operations.settings.isPending ? <View style={styles.loading}><Skeleton height={220} /><Skeleton height={260} /></View> : operations.settings.isError ? <QueryError title="Settings couldn’t be loaded" onRetry={() => operations.settings.refetch()} /> : <View style={styles.columns}>
       <View style={styles.mainColumn}>
-        <Card title="Restaurant profile" description="Shown across your operations workspace and ordering surfaces."><View style={styles.form}><Field label="Restaurant name" required value={operations.form.restaurantName} onChangeText={(value) => operations.setField("restaurantName", value)} /><View style={styles.brandPreview}><View style={styles.brandIcon}><Text style={styles.brandIconText}>AO</Text></View><View><Text style={styles.previewLabel}>Workspace preview</Text><Text style={styles.previewName}>{operations.form.restaurantName || "Your restaurant"}</Text></View></View></View></Card>
+        <Card title="Restaurant profile" description="Shown across your operations workspace and ordering surfaces."><View style={styles.form}><Field label="Restaurant name" required value={operations.form.restaurantName} onChangeText={(value) => operations.setField("restaurantName", value)} /><View style={styles.brandPreview}><View style={styles.brandIcon}><Text style={styles.brandIconText}>{getInitials(operations.form.restaurantName) || "—"}</Text></View><View><Text style={styles.previewLabel}>Workspace preview</Text><Text style={styles.previewName}>{operations.form.restaurantName || "Your restaurant"}</Text></View></View></View></Card>
         <Card title="Service hours" description="Define when guests can submit online orders." style={styles.cardGap}><View style={styles.fieldRow}><View style={styles.fieldHalf}><Field label="Opening time" required value={operations.form.openingTime} onChangeText={(value) => operations.setField("openingTime", value)} placeholder="09:00" /></View><View style={styles.fieldHalf}><Field label="Closing time" required value={operations.form.closingTime} onChangeText={(value) => operations.setField("closingTime", value)} placeholder="22:00" /></View></View><Divider /><View style={styles.hoursSummary}><Ionicons name="time-outline" size={20} color={colors.primary} /><Text style={styles.hoursText}>Orders accepted from <Text style={styles.hoursStrong}>{operations.form.openingTime}</Text> to <Text style={styles.hoursStrong}>{operations.form.closingTime}</Text></Text></View></Card>
       </View>
       <View style={styles.sideColumn}>
