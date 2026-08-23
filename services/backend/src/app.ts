@@ -7,8 +7,9 @@ import type { Database } from "./db/client";
 import type { Env } from "./env";
 import { errorResponse } from "./http/errors";
 import { HealthSchema, jsonResponse } from "./http/schemas";
+import { registerMenuRoutes } from "./routes/menu";
 
-type AppBindings = {
+export type AppBindings = {
   Bindings: Env;
   Variables: {
     requestId: string;
@@ -86,6 +87,8 @@ export function createApp(database: Database) {
       timestamp: new Date().toISOString(),
     }),
   );
+
+  registerMenuRoutes(app);
 
   app.doc("/openapi.json", {
     openapi: "3.1.0",

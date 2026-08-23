@@ -68,6 +68,288 @@
           "version",
           "timestamp"
         ]
+      },
+      "MenuCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MenuItem"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "position",
+          "isActive",
+          "createdAt",
+          "updatedAt",
+          "items"
+        ]
+      },
+      "MenuItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "categoryId": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "prepMinutes": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "isAvailable": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "categoryId",
+          "name",
+          "description",
+          "price",
+          "prepMinutes",
+          "isAvailable",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreatedMenuCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "position",
+          "isActive",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "ApiError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "example": "VALIDATION_ERROR"
+              },
+              "message": {
+                "type": "string",
+                "example": "The request could not be processed."
+              },
+              "requestId": {
+                "type": "string",
+                "example": "3c8d253b-c4fc-43d9-9893-d66cdcca87dc"
+              },
+              "details": {
+                "nullable": true
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "requestId"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "CreateMenuCategory": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 300
+          },
+          "position": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CreateMenuItem": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "price": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 1000000
+          },
+          "prepMinutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 120
+          },
+          "isAvailable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "categoryId",
+          "name",
+          "description",
+          "price",
+          "prepMinutes"
+        ]
+      },
+      "UpdateMenuItem": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "price": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 1000000
+          },
+          "prepMinutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 120
+          },
+          "isAvailable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "price",
+          "prepMinutes"
+        ]
       }
     },
     "parameters": {}
@@ -88,6 +370,187 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu": {
+      "get": {
+        "operationId": "getMenu",
+        "summary": "List the categorized menu",
+        "tags": [
+          "Menu"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MenuCategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu/categories": {
+      "post": {
+        "operationId": "createMenuCategory",
+        "summary": "Create a menu category",
+        "tags": [
+          "Menu"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMenuCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedMenuCategory"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid category data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu/items": {
+      "post": {
+        "operationId": "createMenuItem",
+        "summary": "Create a menu item",
+        "tags": [
+          "Menu"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMenuItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Menu item created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid menu item data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu/items/{id}": {
+      "patch": {
+        "operationId": "updateMenuItem",
+        "summary": "Update a menu item",
+        "description": "Updates menu details or availability. This is the deliberate stock-control action used by the dashboard.",
+        "tags": [
+          "Menu"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 3
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMenuItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Menu item or category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid menu item data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
