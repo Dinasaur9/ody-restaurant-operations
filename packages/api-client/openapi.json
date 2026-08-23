@@ -576,6 +576,271 @@
           "channel",
           "items"
         ]
+      },
+      "CustomerWithHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "orderCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalSpend": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "averageOrder": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "lastOrderAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "recentOrders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderPreview"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "createdAt",
+          "updatedAt",
+          "orderCount",
+          "totalSpend",
+          "averageOrder",
+          "lastOrderAt",
+          "recentOrders"
+        ]
+      },
+      "OrderPreview": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "displayId": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "delivery",
+              "pickup",
+              "dine_in"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "preparing",
+              "ready",
+              "completed",
+              "cancelled"
+            ]
+          },
+          "total": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "displayId",
+          "customerName",
+          "channel",
+          "status",
+          "total",
+          "createdAt"
+        ]
+      },
+      "OrderingSettings": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "restaurantName": {
+            "type": "string"
+          },
+          "prepTimeMinutes": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "autoAcceptOrders": {
+            "type": "boolean"
+          },
+          "serviceEnabled": {
+            "type": "boolean"
+          },
+          "openingTime": {
+            "type": "string"
+          },
+          "closingTime": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "restaurantName",
+          "prepTimeMinutes",
+          "autoAcceptOrders",
+          "serviceEnabled",
+          "openingTime",
+          "closingTime",
+          "updatedAt"
+        ]
+      },
+      "UpdateOrderingSettings": {
+        "type": "object",
+        "properties": {
+          "restaurantName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "prepTimeMinutes": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 120
+          },
+          "autoAcceptOrders": {
+            "type": "boolean"
+          },
+          "serviceEnabled": {
+            "type": "boolean"
+          },
+          "openingTime": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "closingTime": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          }
+        },
+        "required": [
+          "restaurantName",
+          "prepTimeMinutes",
+          "openingTime",
+          "closingTime"
+        ]
+      },
+      "DashboardSummary": {
+        "type": "object",
+        "properties": {
+          "revenue": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalOrders": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "activeOrders": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "pendingOrders": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "averageOrder": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "customers": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "popularItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "revenue": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "name",
+                "quantity",
+                "revenue"
+              ]
+            }
+          },
+          "recentOrders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderPreview"
+            }
+          }
+        },
+        "required": [
+          "revenue",
+          "totalOrders",
+          "activeOrders",
+          "pendingOrders",
+          "averageOrder",
+          "customers",
+          "popularItems",
+          "recentOrders"
+        ]
       }
     },
     "parameters": {}
@@ -1030,6 +1295,131 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers": {
+      "get": {
+        "operationId": "getCustomers",
+        "summary": "List customers with order value and history",
+        "tags": [
+          "CRM"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerWithHistory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings": {
+      "get": {
+        "operationId": "getOrderingSettings",
+        "summary": "Get ordering settings",
+        "tags": [
+          "Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderingSettings"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Settings not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateOrderingSettings",
+        "summary": "Update ordering settings",
+        "tags": [
+          "Settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrderingSettings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderingSettings"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Settings not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid service window",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/summary": {
+      "get": {
+        "operationId": "getDashboardSummary",
+        "summary": "Get restaurant performance and live operations summary",
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummary"
                 }
               }
             }

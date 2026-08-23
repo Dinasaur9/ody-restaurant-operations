@@ -9,6 +9,7 @@ import { errorResponse } from "./http/errors";
 import { HealthSchema, jsonResponse } from "./http/schemas";
 import { registerMenuRoutes } from "./routes/menu";
 import { registerOrderRoutes } from "./routes/orders";
+import { registerOperationsRoutes } from "./routes/operations";
 
 export type AppBindings = {
   Bindings: Env;
@@ -91,6 +92,7 @@ export function createApp(database: Database) {
 
   registerMenuRoutes(app);
   registerOrderRoutes(app);
+  registerOperationsRoutes(app);
 
   app.doc("/openapi.json", {
     openapi: "3.1.0",
