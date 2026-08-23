@@ -11,7 +11,7 @@ export function SegmentedSelect<T extends string>({ label, value, options, onCha
         {options.map((option) => {
           const active = option.value === value;
           return (
-            <Pressable key={option.value} accessibilityRole="radio" accessibilityState={{ checked: active, disabled: option.disabled }} disabled={option.disabled} onPress={() => onChange(option.value)} style={(state) => [styles.option, active && styles.active, (state as typeof state & { hovered?: boolean }).hovered && !active && styles.hovered, state.pressed && styles.pressed, option.disabled && styles.disabled]}>
+            <Pressable key={option.value} accessibilityRole="radio" accessibilityState={{ checked: active, disabled: option.disabled }} aria-checked={active} aria-disabled={option.disabled} disabled={option.disabled} onPress={() => onChange(option.value)} style={(state) => [styles.option, active && styles.active, (state as typeof state & { hovered?: boolean }).hovered && !active && styles.hovered, state.pressed && styles.pressed, option.disabled && styles.disabled]}>
               <Text style={[styles.optionText, active && styles.activeText]}>{option.label}</Text>
             </Pressable>
           );

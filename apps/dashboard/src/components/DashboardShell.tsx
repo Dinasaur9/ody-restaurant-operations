@@ -97,6 +97,7 @@ function NavLink({ item, active, compact = false, count }: { item: (typeof navig
       <Pressable
         accessibilityRole="tab"
         accessibilityState={{ selected: active }}
+        aria-current={active ? "page" : undefined}
         onHoverIn={() => setHovered(true)}
         onHoverOut={() => setHovered(false)}
         onPressIn={() => setPressed(true)}
@@ -125,6 +126,7 @@ function LibraryLink({ active }: { active: boolean }) {
   return (
     <Link href="/ui-library" asChild>
       <Pressable
+        aria-current={active ? "page" : undefined}
         onHoverIn={() => setHovered(true)}
         onHoverOut={() => setHovered(false)}
         onPressIn={() => setPressed(true)}
@@ -151,6 +153,7 @@ function Account() {
           accessibilityRole="button"
           accessibilityLabel="Account menu"
           accessibilityState={{ expanded: open }}
+          aria-expanded={open}
           onPress={() => setOpen((current) => !current)}
           style={({ hovered, pressed }: any) => [styles.accountMenuTrigger, hovered && styles.navHovered, pressed && styles.pressed]}
         >

@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, fontSizes, fontWeights, radii, shadows, spacing } from "../tokens";
 
 export function Toggle({ value, onChange, label, description, disabled = false }: { value: boolean; onChange: (value: boolean) => void; label: string; description?: string; disabled?: boolean }) {
-  return <Pressable accessibilityRole="switch" accessibilityState={{ checked: value, disabled }} disabled={disabled} onPress={() => onChange(!value)} style={(state) => [styles.row, (state as typeof state & { hovered?: boolean }).hovered && !disabled && styles.hovered, disabled && styles.disabled]}><View style={styles.copy}><Text style={styles.label}>{label}</Text>{description && <Text style={styles.description}>{description}</Text>}</View><View style={[styles.track, value && styles.trackActive]}><View style={styles.knob} /></View></Pressable>;
+  return <Pressable accessibilityRole="switch" accessibilityState={{ checked: value, disabled }} aria-checked={value} aria-disabled={disabled} disabled={disabled} onPress={() => onChange(!value)} style={(state) => [styles.row, (state as typeof state & { hovered?: boolean }).hovered && !disabled && styles.hovered, disabled && styles.disabled]}><View style={styles.copy}><Text style={styles.label}>{label}</Text>{description && <Text style={styles.description}>{description}</Text>}</View><View style={[styles.track, value && styles.trackActive]}><View style={styles.knob} /></View></Pressable>;
 }
 
 const styles = StyleSheet.create({

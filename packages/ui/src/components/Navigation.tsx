@@ -27,6 +27,7 @@ export function Navigation<T extends string>({
             key={item.value}
             accessibilityRole="tab"
             accessibilityState={{ selected: active }}
+            aria-selected={active}
             onPress={() => onChange(item.value)}
             style={(state) => [
               styles.item,

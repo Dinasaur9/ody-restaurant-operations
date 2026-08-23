@@ -27,7 +27,7 @@ export function PageScaffold({ title, eyebrow, description, action, children }: 
             <Ionicons name="search" size={19} color={colors.textMuted} />
           </Pressable>
           <View style={styles.notificationsAnchor}>
-            <Pressable accessibilityRole="button" accessibilityLabel="Notifications" onPress={() => setNotificationsOpen((current) => !current)} style={({ hovered, pressed }: any) => [styles.iconButton, hovered && styles.iconButtonHovered, pressed && styles.iconButtonPressed]}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Notifications" aria-expanded={notificationsOpen} onPress={() => setNotificationsOpen((current) => !current)} style={({ hovered, pressed }: any) => [styles.iconButton, hovered && styles.iconButtonHovered, pressed && styles.iconButtonPressed]}>
               <Ionicons name="notifications-outline" size={19} color={colors.textMuted} />
               {hasPending && <View style={styles.notificationDot} />}
             </Pressable>

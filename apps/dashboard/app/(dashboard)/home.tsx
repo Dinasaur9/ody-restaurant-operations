@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useGetDashboardSummary } from "@ody/api-client";
 import { formatCurrency, formatRelativeTime } from "@ody/shared";
@@ -12,6 +12,7 @@ const statusTone = (status: string) => status === "completed" ? "success" : stat
 
 export default function HomePage() {
   const summary = useGetDashboardSummary();
+  const router = useRouter();
   return <PageScaffold eyebrow="Today at a glance" title="Good afternoon, Dina" description="Live performance and kitchen activity across Atelier Ody.">
     {summary.isPending ? <CardGridSkeleton /> : summary.isError ? <QueryError onRetry={() => summary.refetch()} /> : summary.data && <>
       <View style={styles.metrics}>
@@ -24,7 +25,7 @@ export default function HomePage() {
         <View style={styles.mainColumn}>
           <SectionHeading title="Recent orders" description="Latest activity across every channel" action={<Link href="/orders" asChild><Pressable><Text style={styles.link}>View all  →</Text></Pressable></Link>} />
           <Card style={styles.tableCard}><DataList><DataListHeader columns={[{ label: "Order", flex: 1 }, { label: "Customer", flex: 1.5 }, { label: "Status", flex: 1 }, { label: "Total", flex: 1 }]} />
-            {summary.data.recentOrders.map((order) => <DataListRow key={order.id}><DataListCell><View><Text style={styles.orderId}>{order.displayId}</Text><Text style={styles.muted}>{formatRelativeTime(order.createdAt)}</Text></View></DataListCell><DataListCell flex={1.5}><View><Text style={styles.cellStrong}>{order.customerName}</Text><Text style={styles.muted}>{CHANNEL_LABELS[order.channel]}</Text></View></DataListCell><DataListCell><Badge tone={statusTone(order.status)} dot>{STATUS_LABELS[order.status as OrderStatus]}</Badge></DataListCell><DataListCell><Text style={styles.amount}>{formatCurrency(order.total)}</Text></DataListCell></DataListRow>)}
+            {summary.data.recentOrders.map((order) => <DataListRow key={order.id} label={`Open ${order.displayId}`} onPress={() => router.push({ pathname: "/orders", params: { search: order.displayId } })}><DataListCell><View><Text style={styles.orderId}>{order.displayId}</Text><Text style={styles.muted}>{formatRelativeTime(order.createdAt)}</Text></View></DataListCell><DataListCell flex={1.5}><View><Text style={styles.cellStrong}>{order.customerName}</Text><Text style={styles.muted}>{CHANNEL_LABELS[order.channel]}</Text></View></DataListCell><DataListCell><Badge tone={statusTone(order.status)} dot>{STATUS_LABELS[order.status as OrderStatus]}</Badge></DataListCell><DataListCell><Text style={styles.amount}>{formatCurrency(order.total)}</Text></DataListCell></DataListRow>)}
           </DataList></Card>
         </View>
         <View style={styles.sideColumn}>

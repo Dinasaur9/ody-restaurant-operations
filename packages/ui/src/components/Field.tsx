@@ -22,6 +22,7 @@ export function Field({ label, hint, error, required, style, ...props }: FieldPr
         {...props}
         accessibilityLabel={label}
         accessibilityState={{ disabled: !props.editable }}
+        aria-disabled={!props.editable}
         placeholderTextColor={colors.textSubtle}
         onFocus={(event) => { setFocused(true); props.onFocus?.(event); }}
         onBlur={(event) => { setFocused(false); props.onBlur?.(event); }}
