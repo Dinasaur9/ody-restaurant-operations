@@ -1,5 +1,11 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { eq, inArray } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
+import {
+  ORDER_CHANNELS,
+  ORDER_STATUSES,
+  VALID_ORDER_TRANSITIONS,
+  type OrderStatus,
+} from "@ody/types";
 import type { AppBindings } from "../app";
 import {
   customers,
@@ -14,6 +20,7 @@ import {
 import { ApiError } from "../http/errors";
 import { ApiErrorSchema, jsonResponse } from "../http/schemas";
 import { OrderPricingError, priceOrder } from "../services/order-pricing";
+import { assertOrderTransition } from "../services/order-status";
 
 const OrderItemResponseSchema = orderItemSelectSchema.openapi("OrderItem");
 
@@ -23,6 +30,7 @@ export const OrderResponseSchema = orderSelectSchema
     createdAt: z.string().datetime(),
     updatedAt: z.string().datetime(),
     items: z.array(OrderItemResponseSchema),
+    availableActions: z.array(z.enum(ORDER_STATUSES)),
   })
   .openapi("Order");
 
@@ -65,6 +73,74 @@ const createOrderRoute = createRoute({
   },
 });
 
+const orderIdParameters = z.object({
+  id: z.coerce.number().int().positive().openapi({
+    param: { name: "id", in: "path" },
+    example: 42,
+  }),
+});
+
+const listOrdersRoute = createRoute({
+  method: "get",
+  path: "/api/orders",
+  operationId: "getOrders",
+  summary: "List and filter orders",
+  tags: ["Orders"],
+  request: {
+    query: z.object({
+      status: z.enum(ORDER_STATUSES).optional(),
+      channel: z.enum(ORDER_CHANNELS).optional(),
+      search: z.string().trim().max(100).optional(),
+    }),
+  },
+  responses: {
+    200: jsonResponse(z.array(OrderResponseSchema)),
+    422: jsonResponse(ApiErrorSchema, "Invalid filters"),
+  },
+});
+
+const getOrderRoute = createRoute({
+  method: "get",
+  path: "/api/orders/{id}",
+  operationId: "getOrder",
+  summary: "Get complete order details",
+  tags: ["Orders"],
+  request: { params: orderIdParameters },
+  responses: {
+    200: jsonResponse(OrderResponseSchema),
+    404: jsonResponse(ApiErrorSchema, "Order not found"),
+  },
+});
+
+const updateOrderStatusRoute = createRoute({
+  method: "patch",
+  path: "/api/orders/{id}/status",
+  operationId: "updateOrderStatus",
+  summary: "Perform an order status action",
+  description:
+    "Moves an order through its explicit lifecycle. Arbitrary status assignment, skipped stages, reversals, and repeated transitions are rejected.",
+  tags: ["Orders"],
+  request: {
+    params: orderIdParameters,
+    body: {
+      content: {
+        "application/json": {
+          schema: z
+            .object({ status: z.enum(ORDER_STATUSES) })
+            .openapi("UpdateOrderStatus"),
+        },
+      },
+      required: true,
+    },
+  },
+  responses: {
+    200: jsonResponse(OrderResponseSchema),
+    404: jsonResponse(ApiErrorSchema, "Order not found"),
+    409: jsonResponse(ApiErrorSchema, "Invalid status transition"),
+    422: jsonResponse(ApiErrorSchema, "Invalid status value"),
+  },
+});
+
 const serializeOrder = (
   order: typeof orders.$inferSelect,
   items: (typeof orderItems.$inferSelect)[],
@@ -73,9 +149,100 @@ const serializeOrder = (
   createdAt: order.createdAt.toISOString(),
   updatedAt: order.updatedAt.toISOString(),
   items,
+  availableActions: [...VALID_ORDER_TRANSITIONS[order.status]],
 });
 
 export function registerOrderRoutes(app: OpenAPIHono<AppBindings>) {
+  app.openapi(listOrdersRoute, async (context) => {
+    const db = context.get("db");
+    const { status, channel, search } = context.req.valid("query");
+    const conditions = [
+      status ? eq(orders.status, status) : undefined,
+      channel ? eq(orders.channel, channel) : undefined,
+      search
+        ? or(
+            ilike(orders.displayId, `%${search}%`),
+            ilike(orders.customerName, `%${search}%`),
+          )
+        : undefined,
+    ].filter((condition) => condition !== undefined);
+
+    const orderRows = await db
+      .select()
+      .from(orders)
+      .where(conditions.length ? and(...conditions) : undefined)
+      .orderBy(desc(orders.createdAt));
+
+    if (orderRows.length === 0) return context.json([], 200);
+
+    const itemRows = await db
+      .select()
+      .from(orderItems)
+      .where(inArray(orderItems.orderId, orderRows.map((order) => order.id)));
+
+    return context.json(
+      orderRows.map((order) =>
+        serializeOrder(
+          order,
+          itemRows.filter((item) => item.orderId === order.id),
+        ),
+      ),
+      200,
+    );
+  });
+
+  app.openapi(getOrderRoute, async (context) => {
+    const db = context.get("db");
+    const { id } = context.req.valid("param");
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.id, id))
+      .limit(1);
+
+    if (!order) {
+      throw new ApiError(404, "ORDER_NOT_FOUND", "The order does not exist.");
+    }
+
+    const items = await db
+      .select()
+      .from(orderItems)
+      .where(eq(orderItems.orderId, id));
+    return context.json(serializeOrder(order, items), 200);
+  });
+
+  app.openapi(updateOrderStatusRoute, async (context) => {
+    const db = context.get("db");
+    const { id } = context.req.valid("param");
+    const { status } = context.req.valid("json");
+    const [current] = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.id, id))
+      .limit(1);
+
+    if (!current) {
+      throw new ApiError(404, "ORDER_NOT_FOUND", "The order does not exist.");
+    }
+
+    assertOrderTransition(current.status as OrderStatus, status);
+
+    const [updated] = await db
+      .update(orders)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(orders.id, id))
+      .returning();
+    if (!updated) {
+      throw new ApiError(500, "UPDATE_FAILED", "The order could not be updated.");
+    }
+
+    const items = await db
+      .select()
+      .from(orderItems)
+      .where(eq(orderItems.orderId, id));
+    return context.json(serializeOrder(updated, items), 200);
+  });
+
   app.openapi(createOrderRoute, async (context) => {
     const db = context.get("db");
     const body = context.req.valid("json");
