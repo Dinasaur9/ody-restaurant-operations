@@ -1,0 +1,12 @@
+import { Ionicons } from "@expo/vector-icons";
+import type { PropsWithChildren, ReactNode } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Card, colors, fontSizes, fontWeights, radii, spacing } from "@ody/ui";
+
+export function PageScaffold({ title, eyebrow, description, action, children }: PropsWithChildren<{ title: string; eyebrow: string; description: string; action?: ReactNode }>) {
+  return <View><View style={styles.header}><View style={styles.copy}><Text style={styles.eyebrow}>{eyebrow}</Text><Text style={styles.title}>{title}</Text><Text style={styles.description}>{description}</Text></View><View style={styles.actions}><Pressable accessibilityLabel="Search" style={styles.iconButton}><Ionicons name="search" size={19} color={colors.textMuted} /></Pressable><Pressable accessibilityLabel="Notifications" style={styles.iconButton}><Ionicons name="notifications-outline" size={19} color={colors.textMuted} /><View style={styles.notificationDot} /></Pressable>{action}</View></View>{children ?? <Card><Text style={styles.placeholderTitle}>Ready for service</Text><Text style={styles.placeholderBody}>This product area will be connected to the generated API client in its dedicated milestone.</Text></Card>}</View>;
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: spacing[6], marginBottom: spacing[6] }, copy: { flex: 1, maxWidth: 680 }, eyebrow: { color: colors.primary, fontSize: fontSizes.micro, fontWeight: fontWeights.extraBold, textTransform: "uppercase", letterSpacing: 1, marginBottom: spacing[1] }, title: { color: colors.text, fontSize: fontSizes.display, lineHeight: 43, fontWeight: fontWeights.extraBold, letterSpacing: -1 }, description: { color: colors.textMuted, fontSize: fontSizes.body, lineHeight: 21, marginTop: spacing[2] }, actions: { flexDirection: "row", alignItems: "center", gap: spacing[2] }, iconButton: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.border, borderRadius: radii.medium, backgroundColor: colors.surface }, notificationDot: { position: "absolute", top: 8, right: 9, width: 7, height: 7, borderRadius: radii.pill, backgroundColor: colors.danger, borderWidth: 1, borderColor: colors.surface }, placeholderTitle: { color: colors.text, fontSize: fontSizes.heading3, fontWeight: fontWeights.bold }, placeholderBody: { color: colors.textMuted, fontSize: fontSizes.body, marginTop: spacing[2] },
+});

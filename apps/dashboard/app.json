@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Ody Restaurant Operations",
+    "slug": "ody-restaurant-operations",
+    "version": "1.0.0",
+    "orientation": "default",
+    "scheme": "ody-restaurant-operations",
+    "userInterfaceStyle": "light",
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
