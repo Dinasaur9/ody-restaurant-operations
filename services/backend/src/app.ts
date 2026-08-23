@@ -31,7 +31,7 @@ const healthRoute = createRoute({
   },
 });
 
-export function createApp(database: Database) {
+export function createApp(database: Database, configuredCorsOrigin?: string) {
   const app = new OpenAPIHono<AppBindings>({
     defaultHook: (result, context) => {
       if (!result.success) {
@@ -55,7 +55,8 @@ export function createApp(database: Database) {
   app.use(
     "/api/*",
     cors({
-      origin: (origin, context) => context.env.CORS_ORIGIN ?? origin ?? "*",
+      origin: (origin, context) =>
+        configuredCorsOrigin ?? context.env?.CORS_ORIGIN ?? origin ?? "*",
       allowMethods: ["GET", "POST", "PATCH", "OPTIONS"],
       allowHeaders: ["Content-Type", "X-Request-Id"],
       exposeHeaders: ["X-Request-Id"],

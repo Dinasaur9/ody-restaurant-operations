@@ -84,12 +84,17 @@ cancelled orders are terminal.
 - pnpm 10
 - Docker Desktop for the local PostgreSQL workflow
 
-Enable the pinned pnpm version if necessary:
+The repository pins pnpm through Corepack. Enable it if your shell already
+allows Corepack to install global shims:
 
 ```bash
 corepack enable
 corepack prepare pnpm@10.15.0 --activate
 ```
+
+On a locked-down Windows installation, `corepack enable` may require an
+Administrator terminal. Every documented command can instead be prefixed with
+`corepack`, for example `corepack pnpm test`; no global pnpm install is needed.
 
 ## Local setup
 
@@ -136,6 +141,11 @@ corepack prepare pnpm@10.15.0 --activate
 The API is available at `http://localhost:8787`. Interactive documentation is
 at `http://localhost:8787/docs`, and the OpenAPI document is at
 `http://localhost:8787/openapi.json`.
+
+The local API uses Hono's Node adapter and the direct PostgreSQL driver, so it
+connects to the Docker database in `.env`. To exercise the Cloudflare Worker
+runtime against a Neon database instead, run `pnpm --filter @ody/backend
+dev:worker` with an appropriate Worker `DATABASE_URL` binding.
 
 ## Seed data
 
