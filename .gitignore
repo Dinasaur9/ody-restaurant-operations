@@ -7,4 +7,3 @@ coverage/
 .env.local
 *.log
 services/backend/.wrangler/
-packages/api-client/src/generated/

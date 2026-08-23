@@ -1,0 +1,28 @@
+{
+  "name": "@ody/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "orval --config orval.config.ts",
+    "build": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.85.5",
+    "axios": "^1.11.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.10",
+    "@types/node": "^24.3.0",
+    "orval": "^7.11.2",
+    "react": "19.0.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}
