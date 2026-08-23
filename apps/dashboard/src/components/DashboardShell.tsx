@@ -42,7 +42,7 @@ export function DashboardShell({ children }: PropsWithChildren) {
         <Text style={styles.navigationLabel}>Manage</Text>
         <View style={styles.navigation}>
           {navigation.map((item) => (
-            <NavLink key={item.href} item={item} active={pathname === item.href} count={item.href === "/orders" ? summary.data?.activeOrders : undefined} />
+            <NavLink key={item.href} item={item} active={pathname === item.href} count={item.href === "/orders" ? summary.data?.totalOrders : undefined} />
           ))}
         </View>
         <View style={styles.sidebarSpacer} />
