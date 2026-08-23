@@ -8,6 +8,7 @@ import type { Env } from "./env";
 import { errorResponse } from "./http/errors";
 import { HealthSchema, jsonResponse } from "./http/schemas";
 import { registerMenuRoutes } from "./routes/menu";
+import { registerOrderRoutes } from "./routes/orders";
 
 export type AppBindings = {
   Bindings: Env;
@@ -89,6 +90,7 @@ export function createApp(database: Database) {
   );
 
   registerMenuRoutes(app);
+  registerOrderRoutes(app);
 
   app.doc("/openapi.json", {
     openapi: "3.1.0",

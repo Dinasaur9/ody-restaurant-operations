@@ -222,6 +222,7 @@ export const menuItemUpdateSchema = createUpdateSchema(menuItems, {
 
 export const customerSelectSchema = createSelectSchema(customers);
 export const orderSelectSchema = createSelectSchema(orders);
+export const orderInsertSchema = createInsertSchema(orders);
 export const orderItemSelectSchema = createSelectSchema(orderItems);
 export const orderingSettingsSelectSchema = createSelectSchema(orderingSettings);
 export const orderingSettingsUpdateSchema = createUpdateSchema(orderingSettings, {
