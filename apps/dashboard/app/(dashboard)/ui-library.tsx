@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Badge, Button, Card, Dialog, Divider, Dropdown, EmptyState, Field, InlineMessage, SegmentedSelect, Skeleton, Toggle, colors, fontSizes, fontWeights, palette, radii, shadows, spacing } from "@ody/ui";
+import { Badge, Button, Card, Dialog, Divider, Dropdown, EmptyState, Field, InlineMessage, SegmentedSelect, Skeleton, Toast, Toggle, colors, fontSizes, fontWeights, palette, radii, shadows, spacing } from "@ody/ui";
 import { PageScaffold } from "@/components/PageScaffold";
 
 const swatches = [
@@ -8,7 +8,32 @@ const swatches = [
 ] as const;
 
 export default function UiLibraryPage() {
-  const [segment, setSegment] = useState("pickup"); const [dropdown, setDropdown] = useState("main"); const [toggle, setToggle] = useState(true); const [dialog, setDialog] = useState(false);
+  const [segment, setSegment] = useState("pickup");
+  const [dropdown, setDropdown] = useState("main");
+  const [toggle, setToggle] = useState(true);
+  const [dialog, setDialog] = useState(false);
+  const [restaurantName, setRestaurantName] = useState("Atelier Ody");
+  const [email, setEmail] = useState("manager@atelierody.com");
+  const [saving, setSaving] = useState(false);
+  const [notice, setNotice] = useState<string>();
+
+  const demonstrateLoading = () => {
+    setSaving(true);
+    setNotice(undefined);
+    setTimeout(() => {
+      setSaving(false);
+      setNotice("Loading state completed.");
+    }, 900);
+  };
+
+  const resetControls = () => {
+    setRestaurantName("Atelier Ody");
+    setEmail("manager@atelierody.com");
+    setDropdown("main");
+    setSegment("pickup");
+    setToggle(true);
+    setNotice("Component examples reset.");
+  };
   return <PageScaffold eyebrow="Design system" title="UI Library" description="A living reference for Ody’s tokens, reusable components, and product states.">
     <LibrarySection number="01" title="Color tokens" description="Warm neutral foundations with focused operational accents."><View style={styles.swatches}>{swatches.map(([name, color]) => <View key={name} style={styles.swatch}><View style={[styles.color, { backgroundColor: color }]} /><Text style={styles.swatchName}>{name}</Text><Text style={styles.code}>{color}</Text></View>)}</View></LibrarySection>
 
@@ -16,11 +41,12 @@ export default function UiLibraryPage() {
 
     <LibrarySection number="03" title="Spacing & surfaces" description="A four-point rhythm, soft radii, and restrained elevation."><View style={styles.twoColumns}><Card title="Spacing scale" style={styles.flexCard}><View style={styles.spacingList}>{Object.entries(spacing).slice(1, 11).map(([token, value]) => <View key={token} style={styles.spacingRow}><Text style={styles.tokenLabel}>space.{token}</Text><View style={[styles.spacingBar, { width: value }]} /><Text style={styles.code}>{value}px</Text></View>)}</View></Card><View style={styles.flexCard}><Card title="Base surface" description="Cards and grouped information" style={styles.surfaceDemo}><Text style={styles.body}>Border, radius, and card elevation.</Text></Card><View style={[styles.darkSurface, shadows.overlay]}><Badge tone="success" dot>Live</Badge><Text style={styles.darkTitle}>Strong surface</Text><Text style={styles.darkBody}>Used sparingly for emphasis and overlays.</Text></View></View></View></LibrarySection>
 
-    <LibrarySection number="04" title="Components" description="Reusable controls with hover, focus, active, loading, and disabled states."><Card title="Buttons"><View style={styles.row}><Button>Primary action</Button><Button variant="secondary">Secondary</Button><Button variant="ghost">Ghost</Button><Button variant="danger">Destructive</Button><Button loading>Saving</Button><Button disabled>Disabled</Button></View></Card><View style={styles.twoColumns}><Card title="Form controls" style={styles.flexCard}><View style={styles.form}><Field label="Restaurant name" value="Atelier Ody" /><Field label="Email" value="not-an-email" error="Enter a valid email address" /><Dropdown label="Category" value={dropdown} onChange={setDropdown} options={[{ label: "Small plates", value: "small" }, { label: "Mains", value: "main" }, { label: "Drinks", value: "drinks" }]} /><SegmentedSelect label="Order type" value={segment} onChange={setSegment} options={[{ label: "Pickup", value: "pickup" }, { label: "Delivery", value: "delivery" }]} /><Toggle label="Online ordering" description="Accept new orders" value={toggle} onChange={setToggle} /></View></Card><Card title="Status & feedback" style={styles.flexCard}><View style={styles.form}><View style={styles.row}><Badge>Neutral</Badge><Badge tone="primary" dot>Preparing</Badge><Badge tone="success" dot>Ready</Badge><Badge tone="warning" dot>New</Badge><Badge tone="danger" dot>Cancelled</Badge></View><InlineMessage tone="success" title="Changes saved">The menu is now up to date.</InlineMessage><InlineMessage tone="warning" title="Service ends soon">Ordering closes in 30 minutes.</InlineMessage><InlineMessage tone="error" title="Couldn’t create order">One item is no longer available.</InlineMessage><Button variant="secondary" onPress={() => setDialog(true)}>Open dialog</Button></View></Card></View></LibrarySection>
+    <LibrarySection number="04" title="Components" description="Reusable controls with hover, focus, active, loading, and disabled states."><Card title="Buttons" description="Try each enabled button to see its interaction feedback."><View style={styles.row}><Button onPress={() => setNotice("Primary action selected.")}>Primary action</Button><Button variant="secondary" onPress={() => setNotice("Secondary action selected.")}>Secondary</Button><Button variant="ghost" onPress={resetControls}>Reset examples</Button><Button variant="danger" onPress={() => setNotice("Destructive action selected—no data was changed.")}>Destructive</Button><Button loading={saving} onPress={demonstrateLoading}>{saving ? "Saving" : "Test loading"}</Button><Button disabled>Disabled</Button></View></Card><View style={styles.twoColumns}><Card title="Form controls" description="These examples are editable and keep local demo state." style={styles.flexCard}><View style={styles.form}><Field label="Restaurant name" value={restaurantName} onChangeText={setRestaurantName} /><Field label="Email" value={email} onChangeText={setEmail} error={email.includes("@") ? undefined : "Enter a valid email address"} keyboardType="email-address" /><Dropdown label="Category" value={dropdown} onChange={setDropdown} options={[{ label: "Small plates", value: "small" }, { label: "Mains", value: "main" }, { label: "Drinks", value: "drinks" }]} /><SegmentedSelect label="Order type" value={segment} onChange={setSegment} options={[{ label: "Pickup", value: "pickup" }, { label: "Delivery", value: "delivery" }]} /><Toggle label="Online ordering" description="Accept new orders" value={toggle} onChange={setToggle} /></View></Card><Card title="Status & feedback" style={styles.flexCard}><View style={styles.form}><View style={styles.row}><Badge>Neutral</Badge><Badge tone="primary" dot>Preparing</Badge><Badge tone="success" dot>Ready</Badge><Badge tone="warning" dot>New</Badge><Badge tone="danger" dot>Cancelled</Badge></View><InlineMessage tone="success" title="Changes saved">The menu is now up to date.</InlineMessage><InlineMessage tone="warning" title="Service ends soon">Ordering closes in 30 minutes.</InlineMessage><InlineMessage tone="error" title="Couldn’t create order">One item is no longer available.</InlineMessage><Button variant="secondary" onPress={() => setDialog(true)}>Open dialog</Button></View></Card></View></LibrarySection>
 
     <LibrarySection number="05" title="Product states" description="Every data view has a deliberate loading, empty, success, warning, and error pattern."><View style={styles.stateGrid}><Card title="Loading" style={styles.stateCard}><View style={styles.form}><Skeleton width="40%" /><Skeleton height={30} /><Skeleton width="72%" /></View></Card><Card title="Empty" style={styles.stateCard}><EmptyState icon="⌁" title="No orders yet" description="New orders will appear here." /></Card><Card title="Success" style={styles.stateCard}><InlineMessage tone="success" title="Ready for pickup">Order OD-1050 is packed.</InlineMessage></Card><Card title="Warning" style={styles.stateCard}><InlineMessage tone="warning" title="Low availability">Two dishes are unavailable.</InlineMessage></Card><Card title="Error" style={styles.stateCard}><InlineMessage tone="error" title="Connection lost">Retry when the API is available.</InlineMessage></Card></View></LibrarySection>
 
-    <Dialog open={dialog} onClose={() => setDialog(false)} title="Confirm service change" description="Dialogs keep high-impact actions focused and deliberate."><View style={styles.dialogActions}><Button variant="secondary" onPress={() => setDialog(false)}>Cancel</Button><Button onPress={() => setDialog(false)}>Confirm</Button></View></Dialog>
+    <Dialog open={dialog} onClose={() => setDialog(false)} title="Confirm service change" description="Dialogs keep high-impact actions focused and deliberate."><View style={styles.dialogActions}><Button variant="secondary" onPress={() => setDialog(false)}>Cancel</Button><Button onPress={() => { setDialog(false); setNotice("Dialog action confirmed."); }}>Confirm</Button></View></Dialog>
+    <Toast message={notice} />
   </PageScaffold>;
 }
 
