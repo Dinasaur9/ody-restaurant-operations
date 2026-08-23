@@ -105,7 +105,3 @@ at any time to return to a clean state.
 - **Web is the fully supported surface.** Shared primitives and responsive
   layout preserve native readiness, but native builds weren't a primary
   deliverable.
-
-## Optional
-
-A Loom walkthrough was not recorded as part of this submission.
