@@ -7,7 +7,9 @@ import { useSettingsOperations } from "@/hooks/useSettingsOperations";
 
 export default function SettingsPage() {
   const operations = useSettingsOperations();
-  return <PageScaffold eyebrow="Workspace" title="Settings" description="Configure how Atelier Ody accepts and prepares online orders." action={<Button loading={operations.pending} onPress={operations.save}>Save changes</Button>}>
+  const restaurantName = operations.settings.data?.restaurantName ?? "your restaurant";
+  const saveLabel = operations.saved && !operations.dirty ? "Saved" : "Save changes";
+  return <PageScaffold eyebrow="Workspace" title="Settings" description={`Configure how ${restaurantName} accepts and prepares online orders.`} action={<Button loading={operations.pending} disabled={!operations.dirty || !operations.valid} onPress={operations.save}>{saveLabel}</Button>}>
     {operations.settings.isPending ? <View style={styles.loading}><Skeleton height={220} /><Skeleton height={260} /></View> : operations.settings.isError ? <QueryError title="Settings couldn’t be loaded" onRetry={() => operations.settings.refetch()} /> : <View style={styles.columns}>
       <View style={styles.mainColumn}>
         <Card title="Restaurant profile" description="Shown across your operations workspace and ordering surfaces."><View style={styles.form}><Field label="Restaurant name" required value={operations.form.restaurantName} onChangeText={(value) => operations.setField("restaurantName", value)} /><View style={styles.brandPreview}><View style={styles.brandIcon}><Text style={styles.brandIconText}>AO</Text></View><View><Text style={styles.previewLabel}>Workspace preview</Text><Text style={styles.previewName}>{operations.form.restaurantName || "Your restaurant"}</Text></View></View></View></Card>

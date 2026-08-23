@@ -3,6 +3,7 @@ import { Link, usePathname } from "expo-router";
 import type { PropsWithChildren } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { colors, fontSizes, fontWeights, layout, radii, shadows, spacing } from "@ody/ui";
+import { useGetOrderingSettings } from "@ody/api-client";
 
 const navigation = [
   { label: "Home", href: "/home", icon: "grid-outline" },
@@ -65,7 +66,16 @@ function MobileHeader() {
 }
 
 function WorkspacePicker() {
-  return <Pressable accessibilityRole="button" style={({ hovered, pressed }: any) => [styles.workspace, hovered && styles.workspaceHovered, pressed && styles.pressed]}><View style={styles.workspaceAvatar}><Text style={styles.workspaceAvatarText}>AO</Text></View><View style={styles.workspaceCopy}><Text style={styles.workspaceEyebrow}>Workspace</Text><Text style={styles.workspaceName}>Atelier Ody</Text></View><Ionicons name="chevron-down" size={16} color={colors.textMuted} /></Pressable>;
+  const settings = useGetOrderingSettings();
+  const name = settings.data?.restaurantName ?? "Atelier Ody";
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "AO";
+
+  return <Link href="/settings" asChild><Pressable accessibilityRole="button" accessibilityLabel={`Manage ${name} workspace`} style={({ hovered, pressed }: any) => [styles.workspace, hovered && styles.workspaceHovered, pressed && styles.pressed]}><View style={styles.workspaceAvatar}><Text style={styles.workspaceAvatarText}>{initials}</Text></View><View style={styles.workspaceCopy}><Text style={styles.workspaceEyebrow}>Workspace</Text><Text numberOfLines={1} style={styles.workspaceName}>{name}</Text></View><Ionicons name="settings-outline" size={16} color={colors.textMuted} /></Pressable></Link>;
 }
 
 function NavLink({ item, active, compact = false }: { item: (typeof navigation)[number]; active: boolean; compact?: boolean }) {
