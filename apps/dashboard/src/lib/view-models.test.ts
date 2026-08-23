@@ -3,6 +3,7 @@ import type { CustomerWithHistory, MenuItem } from "@ody/api-client";
 import {
   calculateOrderEstimate,
   filterCustomers,
+  filterMenuItems,
   getStatusTone,
 } from "./view-models";
 
@@ -58,6 +59,13 @@ describe("dashboard view models", () => {
     expect(filterCustomers([customer], "EXAMPLE.COM")).toEqual([customer]);
     expect(filterCustomers([customer], "91 08")).toEqual([customer]);
     expect(filterCustomers([customer], "not present")).toEqual([]);
+  });
+
+  it("finds menu items by name without case sensitivity", () => {
+    expect(filterMenuItems(menu, "rigatoni")).toEqual([menu[0]]);
+    expect(filterMenuItems(menu, "SOLD-OUT")).toEqual([menu[1]]);
+    expect(filterMenuItems(menu, "not present")).toEqual([]);
+    expect(filterMenuItems(menu, "")).toEqual(menu);
   });
 
   it("estimates from available persisted menu prices only", () => {

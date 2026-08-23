@@ -23,6 +23,16 @@ export function filterCustomers(
   );
 }
 
+export function filterMenuItems(
+  items: readonly MenuItem[],
+  search: string,
+): MenuItem[] {
+  const query = search.trim().toLocaleLowerCase();
+  if (!query) return [...items];
+
+  return items.filter((item) => item.name.toLocaleLowerCase().includes(query));
+}
+
 export function calculateOrderEstimate(
   menu: readonly MenuItem[],
   quantities: Readonly<Record<number, number>>,

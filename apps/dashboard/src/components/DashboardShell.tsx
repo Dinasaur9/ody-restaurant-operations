@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Link, usePathname } from "expo-router";
+import { Link, useRouter, usePathname } from "expo-router";
 import { useState, type PropsWithChildren } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { colors, fontSizes, fontWeights, layout, radii, shadows, spacing } from "@ody/ui";
@@ -139,7 +139,41 @@ function LibraryLink({ active }: { active: boolean }) {
 }
 
 function Account() {
-  return <View style={styles.account}><View style={styles.accountAvatar}><Text style={styles.accountAvatarText}>DC</Text></View><View style={styles.accountCopy}><Text style={styles.accountName}>Dina Chen</Text><Text style={styles.accountRole}>Restaurant manager</Text></View><Ionicons name="ellipsis-horizontal" size={17} color={colors.textMuted} /></View>;
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <View style={styles.account}>
+      <View style={styles.accountAvatar}><Text style={styles.accountAvatarText}>DC</Text></View>
+      <View style={styles.accountCopy}><Text style={styles.accountName}>Dina Chen</Text><Text style={styles.accountRole}>Restaurant manager</Text></View>
+      <View style={styles.accountMenuAnchor}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Account menu"
+          accessibilityState={{ expanded: open }}
+          onPress={() => setOpen((current) => !current)}
+          style={({ hovered, pressed }: any) => [styles.accountMenuTrigger, hovered && styles.navHovered, pressed && styles.pressed]}
+        >
+          <Ionicons name="ellipsis-horizontal" size={17} color={colors.textMuted} />
+        </Pressable>
+        {open && (
+          <>
+            <Pressable accessibilityLabel="Close account menu" style={styles.accountMenuScrim} onPress={() => setOpen(false)} />
+            <View style={styles.accountMenu}>
+              <Pressable
+                accessibilityRole="menuitem"
+                onPress={() => { setOpen(false); router.push("/settings"); }}
+                style={({ hovered, pressed }: any) => [styles.accountMenuItem, hovered && styles.navHovered, pressed && styles.pressed]}
+              >
+                <Ionicons name="settings-outline" size={16} color={colors.textMuted} />
+                <Text style={styles.accountMenuItemText}>Restaurant settings</Text>
+              </Pressable>
+            </View>
+          </>
+        )}
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -158,6 +192,11 @@ const styles = StyleSheet.create({
   navItem: { minHeight: 43, flexDirection: "row", alignItems: "center", gap: spacing[3], paddingHorizontal: spacing[3], borderRadius: radii.medium }, navActive: { backgroundColor: colors.primarySoft }, navHovered: { backgroundColor: colors.surfaceMuted }, pressed: { opacity: .72 }, navText: { flex: 1, color: colors.textMuted, fontSize: fontSizes.body, fontWeight: fontWeights.semibold }, navTextActive: { color: colors.primary, fontWeight: fontWeights.bold }, navCount: { minWidth: 22, alignItems: "center", paddingHorizontal: 6, paddingVertical: 2, borderRadius: radii.pill, backgroundColor: colors.accent }, navCountText: { color: colors.text, fontSize: fontSizes.micro, fontWeight: fontWeights.extraBold },
   sidebarSpacer: { flex: 1 }, libraryLink: { minHeight: 43, flexDirection: "row", alignItems: "center", gap: spacing[3], paddingHorizontal: spacing[3], borderRadius: radii.medium },
   account: { flexDirection: "row", alignItems: "center", gap: spacing[2], borderTopWidth: 1, borderTopColor: colors.border, paddingTop: spacing[4], marginTop: spacing[3] }, accountAvatar: { width: 36, height: 36, borderRadius: radii.medium, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceStrong }, accountAvatarText: { color: colors.textInverse, fontSize: fontSizes.micro, fontWeight: fontWeights.extraBold }, accountCopy: { flex: 1, gap: 1 }, accountName: { color: colors.text, fontSize: fontSizes.caption, fontWeight: fontWeights.bold }, accountRole: { color: colors.textSubtle, fontSize: fontSizes.micro },
+  accountMenuAnchor: { position: "relative" }, accountMenuTrigger: { width: 28, height: 28, alignItems: "center", justifyContent: "center", borderRadius: radii.medium },
+  accountMenuScrim: { ...StyleSheet.absoluteFillObject, position: "fixed" as never, zIndex: 40 },
+  accountMenu: { position: "absolute", zIndex: 50, bottom: "100%", right: 0, marginBottom: spacing[2], width: 200, borderWidth: 1, borderColor: colors.border, borderRadius: radii.medium, backgroundColor: colors.surface, padding: spacing[1], ...shadows.overlay },
+  accountMenuItem: { flexDirection: "row", alignItems: "center", gap: spacing[2], minHeight: 38, paddingHorizontal: spacing[2], borderRadius: radii.small },
+  accountMenuItemText: { color: colors.text, fontSize: fontSizes.caption, fontWeight: fontWeights.semibold },
   contentScroll: { flex: 1 }, content: { width: "100%", maxWidth: layout.contentMaxWidth, alignSelf: "center", padding: layout.pageGutterDesktop, paddingBottom: spacing[16] },
   mobileHeader: { height: 64, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing[4], backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border }, livePill: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: spacing[3], paddingVertical: 7, borderRadius: radii.pill, backgroundColor: colors.successSoft }, liveDot: { width: 7, height: 7, borderRadius: radii.pill, backgroundColor: colors.success }, liveText: { color: colors.success, fontSize: fontSizes.micro, fontWeight: fontWeights.bold }, mobileContent: { padding: layout.pageGutterMobile, paddingBottom: 100 },
   mobileNavigation: { position: "fixed" as never, zIndex: 50, left: 0, right: 0, bottom: 0, minHeight: 68, flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingHorizontal: spacing[2], paddingBottom: 4, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border, ...shadows.card }, mobileNavItem: { minWidth: 58, minHeight: 55, alignItems: "center", justifyContent: "center", gap: 3, borderRadius: radii.medium }, mobileNavActive: { backgroundColor: colors.primarySoft }, mobileNavText: { color: colors.textMuted, fontSize: 9, fontWeight: fontWeights.semibold },

@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useMemo, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { CreateOrderChannel, GetOrdersStatus, type MenuItem, type OrderAvailableActionsItem } from "@ody/api-client";
 import { formatCurrency, formatRelativeTime } from "@ody/shared";
@@ -16,6 +17,17 @@ const actionLabels: Record<OrderAvailableActionsItem, string> = { pending: "Mark
 
 export default function OrdersPage() {
   const operations = useOrderOperations();
+  const params = useLocalSearchParams<{ search?: string; status?: string }>();
+
+  useEffect(() => {
+    if (!params.search && !params.status) return;
+    operations.setFilters((current) => ({
+      ...current,
+      ...(params.search ? { search: params.search } : {}),
+      ...(params.status ? { status: params.status as GetOrdersStatus } : {}),
+    }));
+  }, [params.search, params.status]);
+
   return <PageScaffold eyebrow="Live operations" title="Orders" description="Track every order from acceptance through preparation and handoff." action={<Button onPress={() => operations.setCreateOpen(true)}>+  New order</Button>}>
     <Card style={styles.filters}><View style={styles.search}><Field label="Search orders" placeholder="Order number or customer" value={operations.filters.search ?? ""} onChangeText={(search) => operations.setFilters((current) => ({ ...current, search: search || undefined }))} /></View><View><Text style={styles.filterLabel}>Status</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>{statuses.map((status) => <Pressable key={status.value} onPress={() => operations.setFilters((current) => ({ ...current, status: status.value ? status.value as GetOrdersStatus : undefined }))} style={[styles.chip, (operations.filters.status ?? "") === status.value && styles.chipActive]}><Text style={[styles.chipText, (operations.filters.status ?? "") === status.value && styles.chipTextActive]}>{status.label}</Text></Pressable>)}</ScrollView></View></Card>
 

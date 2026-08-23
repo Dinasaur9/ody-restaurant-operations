@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useMemo, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useGetCustomers, type CustomerWithHistory } from "@ody/api-client";
 import { formatCurrency, formatRelativeTime, getInitials } from "@ody/shared";
@@ -11,6 +12,8 @@ import { filterCustomers, getStatusTone } from "@/lib/view-models";
 
 export default function CrmPage() {
   const customers = useGetCustomers(); const [search, setSearch] = useState(""); const [selected, setSelected] = useState<CustomerWithHistory | null>(null);
+  const params = useLocalSearchParams<{ search?: string }>();
+  useEffect(() => { if (params.search) setSearch(params.search); }, [params.search]);
   const filtered = useMemo(() => filterCustomers(customers.data ?? [], search), [customers.data, search]);
   const totalValue = customers.data?.reduce((sum, customer) => sum + customer.totalSpend, 0) ?? 0;
   return <PageScaffold eyebrow="Guest relationships" title="Customers" description="Understand guest frequency, value, and recent ordering activity.">
