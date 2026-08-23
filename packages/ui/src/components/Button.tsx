@@ -47,22 +47,21 @@ export function Button({
         ];
       }}
     >
-      {loading ? (
+      {loading && (
         <ActivityIndicator
           size="small"
           color={variant === "primary" ? colors.textInverse : colors.primary}
         />
-      ) : (
-        <Text
-          style={[
-            styles.label,
-            variant === "primary" && styles.primaryLabel,
-            variant === "danger" && styles.dangerLabel,
-          ]}
-        >
-          {children}
-        </Text>
       )}
+      <Text
+        style={[
+          styles.label,
+          variant === "primary" && styles.primaryLabel,
+          variant === "danger" && styles.dangerLabel,
+        ]}
+      >
+        {children}
+      </Text>
     </Pressable>
   );
 }
@@ -73,6 +72,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
+    gap: spacing[2],
     paddingHorizontal: spacing[4],
     borderRadius: radii.medium,
     borderWidth: 1,
